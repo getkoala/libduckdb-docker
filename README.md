@@ -1,2 +1,3 @@
-# duckdb-alpine
-Duckdb headers and libs for use with alpine images
+# libduckdb-docker
+
+DuckDB headers and libs distributed as Docker images

@@ -1,0 +1,12 @@
+ARG REPOSITORY
+ARG DUCKDB_VERSION
+
+FROM ${REPOSITORY}:${DUCKDB_VERSION} AS libduckdb
+
+FROM ruby:3-slim
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends make g++ \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=libduckdb /libduckdb /
+RUN gem install duckdb
+COPY tests/test.rb /test.rb

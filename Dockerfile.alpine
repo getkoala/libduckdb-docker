@@ -1,0 +1,19 @@
+ARG ALPINE_VERSION
+
+FROM alpine:${ALPINE_VERSION} AS build
+ARG DUCKDB_VERSION
+RUN apk add --update --no-cache make cmake gcc musl-dev g++
+RUN set -x \
+    && cd /tmp \
+    && wget https://github.com/duckdb/duckdb/archive/refs/tags/v${DUCKDB_VERSION}.tar.gz -O - | tar xvz \
+    && cd duckdb-${DUCKDB_VERSION} \
+    && make \
+    && mkdir -p /duckdb/usr/local/lib \
+    && mkdir -p /duckdb/usr/local/include \
+    && cp -pv build/release/src/*.so /duckdb/usr/local/lib \
+    && cp -pv src/include/*.h /duckdb/usr/local/include \
+    && cd ../ \
+    && rm -rf /tmp/duckdb*
+
+FROM scratch
+COPY --from=build /duckdb /libduckdb

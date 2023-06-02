@@ -1,0 +1,11 @@
+ARG REPOSITORY
+ARG ALPINE_VERSION
+ARG DUCKDB_VERSION
+
+FROM ${REPOSITORY}:${DUCKDB_VERSION}-alpine${ALPINE_VERSION} AS libduckdb
+
+FROM ruby:3-alpine${ALPINE_VERSION}
+RUN apk add --no-cache --update make g++
+COPY --from=libduckdb /libduckdb /
+RUN gem install duckdb
+COPY tests/test.rb /test.rb
