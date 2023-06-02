@@ -37,7 +37,6 @@ jobs:
       -
         name: Test
         run: |
-          docker run --rm ${{ secrets.DOCKERHUB_USERNAME }}/libduckdb:${{ matrix.duckdb_version }}
           docker build \
             --build-arg REPOSITORY="${{ secrets.DOCKERHUB_USERNAME }}/libduckdb" \
             --build-arg DUCKDB_VERSION="${{ matrix.duckdb_version }}" \
