@@ -78,9 +78,9 @@ jobs:
         name: Build and export to Docker
         uses: docker/build-push-action@v4
         with:
-          build-args:
-            ALPINE_VERSION: ${{ matrix.alpine_version }}
-            DUCKDB_VERSION: ${{ matrix.duckdb_version }}
+          build-args: |
+            ALPINE_VERSION=${{ matrix.alpine_version }}
+            DUCKDB_VERSION=${{ matrix.duckdb_version }}
           context: .
           file: ./Dockerfile.alpine
           load: true
@@ -100,9 +100,9 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v4
         with:
-          build-args:
-            ALPINE_VERSION: ${{ matrix.alpine_version }}
-            DUCKDB_VERSION: ${{ matrix.duckdb_version }}
+          build-args: |
+            ALPINE_VERSION=${{ matrix.alpine_version }}
+            DUCKDB_VERSION=${{ matrix.duckdb_version }}
           context: .
           file: ./Dockerfile.alpine
           push: true
