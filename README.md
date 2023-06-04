@@ -7,6 +7,10 @@ Main use case it to support a project that depends on [suketa/ruby-duckdb](https
 
 Curious why I built this? Skip to the [why](#why) section below.
 
+## Available tags
+
+https://hub.docker.com/r/fgrehm/libduckdb/tags
+
 ## Usage
 
 On your `Dockerfile`s:
