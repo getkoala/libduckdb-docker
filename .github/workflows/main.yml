@@ -4,6 +4,16 @@ on:
   push:
     branches:
       - "main"
+  workflow_dispatch:
+    inputs:
+      scratch:
+        description: 'Build scratch image'
+        required: false
+        type: boolean
+      alpine:
+        description: 'Build Alpine image'
+        required: false
+        type: boolean
 
 jobs:
   changes:
@@ -33,7 +43,7 @@ jobs:
 
   build-and-test-scratch:
     needs: changes
-    if: ${{ needs.changes.outputs.scratch == 'true' }}
+    if: ${{ needs.changes.outputs.scratch == 'true' || inputs.scratch }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -84,7 +94,7 @@ jobs:
 
   build-and-test-alpine:
     needs: changes
-    if: ${{ needs.changes.outputs.alpine == 'true' }}
+    if: ${{ needs.changes.outputs.alpine == 'true' || inputs.alpine }}
     strategy:
       matrix:
         duckdb_version: ['0.8.0']
