@@ -34,11 +34,9 @@ jobs:
           filters: |
             alpine:
               - 'tests/**'
-              - '!tests/Dockerfile.scratch'
               - 'Dockerfile.alpine'
             scratch:
               - 'tests/**'
-              - '!tests/Dockerfile.alpine'
               - 'Dockerfile.scratch'
 
   build-and-test-scratch:
