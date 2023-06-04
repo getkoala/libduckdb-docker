@@ -6,7 +6,30 @@ on:
       - "main"
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      alpine: ${{ steps.filter.outputs.alpine }}
+      scratch: ${{ steps.filter.outputs.scratch }}
+    steps:
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          alpine:
+            - 'tests/**'
+            - '!tests/Dockerfile.scratch'
+            - 'Dockerfile.alpine'
+          scratch:
+            - 'tests/**'
+            - '!tests/Dockerfile.alpine'
+            - 'Dockerfile.scratch'
+
   build-and-test-scratch:
+    needs: changes
+    if: ${{ needs.changes.outputs.scratch == 'true' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -56,6 +79,8 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/libduckdb:${{ matrix.duckdb_version }}
 
   build-and-test-alpine:
+    needs: changes
+    if: ${{ needs.changes.outputs.alpine == 'true' }}
     strategy:
       matrix:
         duckdb_version: ['0.8.0']
