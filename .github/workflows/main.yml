@@ -14,18 +14,22 @@ jobs:
       alpine: ${{ steps.filter.outputs.alpine }}
       scratch: ${{ steps.filter.outputs.scratch }}
     steps:
-    - uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          alpine:
-            - 'tests/**'
-            - '!tests/Dockerfile.scratch'
-            - 'Dockerfile.alpine'
-          scratch:
-            - 'tests/**'
-            - '!tests/Dockerfile.alpine'
-            - 'Dockerfile.scratch'
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            alpine:
+              - 'tests/**'
+              - '!tests/Dockerfile.scratch'
+              - 'Dockerfile.alpine'
+            scratch:
+              - 'tests/**'
+              - '!tests/Dockerfile.alpine'
+              - 'Dockerfile.scratch'
 
   build-and-test-scratch:
     needs: changes
