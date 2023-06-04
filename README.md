@@ -159,9 +159,10 @@ duckdb >= 0.5.0 is not found. Install duckdb >= 0.5.0 library and header file.
 
 If I'm not mistaken, the reason for that is because Alpine is based on
 [musl](https://en.wikipedia.org/wiki/Musl) and even installing packages like
-`gcompat` won't get it fixed. The solution is to compile the DuckDB library
-yourself and that will take a good 20+min to complete (it takes 30min on
-[GitHub actions](https://github.com/fgrehm/libduckdb-docker/actions)).
+`gcompat` won't get it fixed. The solution is to [compile the DuckDB library
+yourself](https://github.com/fgrehm/libduckdb-docker/blob/main/Dockerfile.alpine)
+and that will take a good 20+min to complete (it takes 30min on
+[GitHub actions]([https://github.com/fgrehm/libduckdb-docker/actions](https://github.com/fgrehm/libduckdb-docker/actions/runs/5166573763/jobs/9306834368#step:6:1))).
 
 This project makes that precompiled library available for use on Docker images
 using the `COPY` commands as described above, regardless of distribution flavor.
