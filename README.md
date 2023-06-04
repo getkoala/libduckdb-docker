@@ -75,7 +75,7 @@ duckdb >= 0.5.0 is not found. Install duckdb >= 0.5.0 library and header file.
 On MacOS you should be a [`brew install duckdb`](https://github.com/suketa/ruby-duckdb#pre-requisite-setup-macos)
 away from fixing that and getting the gem to be built.
 
-On Linux machines you'll need to [download the lates C++ package release for DuckDB](https://github.com/suketa/ruby-duckdb#pre-requisite-setup-linux)
+On Linux machines you'll need to [download the latest C++ package release for DuckDB](https://github.com/suketa/ruby-duckdb#pre-requisite-setup-linux)
 and make it available for use by Ruby. In `Dockerfile` terms, this should do
 the trick:
 
@@ -158,4 +158,4 @@ yourself and that will take a good 20+min to complete (it takes 30min on
 [GitHub actions](https://github.com/fgrehm/libduckdb-docker/actions)).
 
 This project makes that precompiled library available for use on Docker images
-using the `COPY` commands as described above.
+using the `COPY` commands as described above, regardless of distribution flavor.
