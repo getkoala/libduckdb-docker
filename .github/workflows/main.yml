@@ -19,15 +19,17 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      alpine: ${{ steps.filter.outputs.alpine }}
-      scratch: ${{ steps.filter.outputs.scratch }}
+      alpine: ${{ steps.filter.outputs.alpine || inputs.alpine }}
+      scratch: ${{ steps.filter.outputs.scratch  || inputs.scratch }}
     steps:
       -
         name: Checkout
         uses: actions/checkout@v3
+        if: ${{ !inputs.scratch && !inputs.alpine }}
       -
         uses: dorny/paths-filter@v2
         id: filter
+        if: ${{ !inputs.scratch && !inputs.alpine }}
         with:
           filters: |
             alpine:
@@ -41,7 +43,7 @@ jobs:
 
   build-and-test-scratch:
     needs: changes
-    if: ${{ needs.changes.outputs.scratch == 'true' || inputs.scratch }}
+    if: ${{ needs.changes.outputs.scratch == 'true' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -60,6 +62,14 @@ jobs:
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       -
+        name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-v1-scratch-${{ matrix.duckdb_version }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-v1-scratch-${{ matrix.duckdb_version }}-
+      -
         name: Build and export to Docker
         uses: docker/build-push-action@v4
         with:
@@ -69,6 +79,8 @@ jobs:
           file: ./Dockerfile.scratch
           load: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/libduckdb:${{ matrix.duckdb_version }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
       -
         name: Test
         run: |
@@ -89,10 +101,18 @@ jobs:
           file: ./Dockerfile.scratch
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/libduckdb:${{ matrix.duckdb_version }}
+      -
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
   build-and-test-alpine:
     needs: changes
-    if: ${{ needs.changes.outputs.alpine == 'true' || inputs.alpine }}
+    if: ${{ needs.changes.outputs.alpine == 'true' }}
     strategy:
       matrix:
         duckdb_version: ['0.8.0']
@@ -112,6 +132,14 @@ jobs:
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       -
+        name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-v1-alpine-${{ matrix.alpine_version }}-${{ matrix.duckdb_version }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-v1-alpine-${{ matrix.alpine_version }}-${{ matrix.duckdb_version }}-
+      -
         name: Build and export to Docker
         uses: docker/build-push-action@v4
         with:
@@ -122,6 +150,8 @@ jobs:
           file: ./Dockerfile.alpine
           load: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/libduckdb:${{ matrix.duckdb_version }}-alpine${{ matrix.alpine_version }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
       -
         name: Test
         run: |
@@ -144,3 +174,11 @@ jobs:
           file: ./Dockerfile.alpine
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/libduckdb:${{ matrix.duckdb_version }}-alpine${{ matrix.alpine_version }}
+      -
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
