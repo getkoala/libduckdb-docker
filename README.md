@@ -5,6 +5,8 @@ in mind but might be helpful for other platforms as well.
 
 Main use case it to support a project that depends on [suketa/ruby-duckdb](https://github.com/suketa/ruby-duckdb).
 
+Curious why I built this? Skip to the [why](#why) section below.
+
 ## Usage
 
 On your `Dockerfile`s:
