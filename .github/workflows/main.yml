@@ -33,9 +33,11 @@ jobs:
         with:
           filters: |
             alpine:
+              - '.github/workflows/main.yml'
               - 'tests/**'
               - 'Dockerfile.alpine'
             scratch:
+              - '.github/workflows/main.yml'
               - 'tests/**'
               - 'Dockerfile.scratch'
 
