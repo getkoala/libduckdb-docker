@@ -5,7 +5,6 @@ ARG DUCKDB_VERSION
 RUN apk add --update --no-cache make cmake gcc musl-dev g++ git libressl-dev
 ENV BUILD_HTTPFS=1 \
     BUILD_EXCEL=1 \
-    BUILD_JEMALLOC=1 \
     BUILD_JSON=1 \
     DUCKDB_VERSION=${DUCKDB_VERSION}
 RUN set -x \
