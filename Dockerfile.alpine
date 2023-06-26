@@ -2,7 +2,13 @@ ARG ALPINE_VERSION
 
 FROM alpine:${ALPINE_VERSION} AS build
 ARG DUCKDB_VERSION
-RUN apk add --update --no-cache make cmake gcc musl-dev g++
+RUN apk add --update --no-cache make cmake gcc musl-dev g++ git libressl-dev
+ENV BUILD_HTTPFS=1 \
+    BUILD_EXCEL=1 \
+    BUILD_JEMALLOC=1 \
+    BUILD_JSON=1 \
+    STATIC_OPENSSL=1 \
+    DUCKDB_VERSION=${DUCKDB_VERSION}
 RUN set -x \
     && cd /tmp \
     && wget https://github.com/duckdb/duckdb/archive/refs/tags/v${DUCKDB_VERSION}.tar.gz -O - | tar xvz \
