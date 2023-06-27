@@ -13,6 +13,7 @@ DuckDB::Database.open do |db|
       p row
     end
 
+    con.query("LOAD 'httpfs'")
     result = con.query("SELECT * FROM 'https://github.com/apache/parquet-testing/raw/master/data/alltypes_plain.snappy.parquet';")
     result.each do |row|
       p row
