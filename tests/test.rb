@@ -12,5 +12,10 @@ DuckDB::Database.open do |db|
     result.each do |row|
       p row
     end
+
+    result = con.query("SELECT * FROM 'https://github.com/apache/parquet-testing/raw/master/data/alltypes_plain.snappy.parquet';")
+    result.each do |row|
+      p row
+    end
   end
 end

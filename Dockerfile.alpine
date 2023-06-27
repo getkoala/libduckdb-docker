@@ -2,16 +2,20 @@ ARG ALPINE_VERSION
 
 FROM alpine:${ALPINE_VERSION} AS build
 ARG DUCKDB_VERSION
-RUN apk add --update --no-cache make cmake gcc musl-dev g++ git libressl-dev
-ENV BUILD_HTTPFS=1 \
-    BUILD_EXCEL=1 \
+RUN apk add --update --no-cache make cmake gcc musl-dev g++ git openssl-dev openssl-libs-static samurai
+
+ENV GEN=ninja \
+    EXTRA_CMAKE_VARIABLES='-DBUILD_UNITTESTS=FALSE -DBUILD_SHELL=FALSE' \
+    BUILD_HTTPFS=1 \
     BUILD_JSON=1 \
-    DUCKDB_VERSION=${DUCKDB_VERSION}
+    STATIC_OPENSSL=1 \
+    EXTENSION_STATIC_BUILD=1
+
 RUN set -x \
     && cd /tmp \
-    && wget https://github.com/duckdb/duckdb/archive/refs/tags/v${DUCKDB_VERSION}.tar.gz -O - | tar xvz \
-    && cd duckdb-${DUCKDB_VERSION} \
-    && make \
+    && git clone --depth=1 -b v${DUCKDB_VERSION} https://github.com/duckdb/duckdb \
+    && cd duckdb \
+    && make release \
     && mkdir -p /duckdb/usr/local/lib \
     && mkdir -p /duckdb/usr/local/include \
     && cp -pv build/release/src/*.so /duckdb/usr/local/lib \
