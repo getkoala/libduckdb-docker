@@ -31,7 +31,7 @@ COPY --from=libduckdb /libduckdb/usr/local/lib/libduckdb.so /usr/local/lib
 ### Alpine Linux
 
 ```dockerfile
-FROM fgrehm/libduckdb:0.9.2-alpine3.19 AS libduckdb
+FROM fgrehm/libduckdb:0.10.0-alpine3.19 AS libduckdb
 
 FROM ruby:3.2-alpine3.19
 RUN apk add --no-cache --update \
@@ -48,7 +48,7 @@ RUN gem install duckdb
 ### Other distros
 
 ```dockerfile
-FROM fgrehm/libduckdb:0.9.2 AS libduckdb
+FROM fgrehm/libduckdb:0.10.0 AS libduckdb
 
 FROM ruby:3-slim
 
@@ -87,7 +87,7 @@ the trick:
 
 ```dockerfile
 FROM ruby:3
-ARG DUCKDB_VERSION=0.9.2
+ARG DUCKDB_VERSION=0.10.0
 RUN wget https://github.com/duckdb/duckdb/releases/download/v${DUCKDB_VERSION}/libduckdb-linux-amd64.zip \
     && unzip libduckdb-linux-amd64.zip -d libduckdb \
     && mv libduckdb/duckdb.* /usr/local/include \
@@ -103,7 +103,7 @@ few more things and your `Dockerfile` might look like this:
 
 ```dockerfile
 FROM ruby:3-slim
-ARG DUCKDB_VERSION=0.9.2
+ARG DUCKDB_VERSION=0.10.0
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
                        make \
@@ -125,7 +125,7 @@ Unfortunately the equivalent of that for Alpine Linux won't work:
 
 ```dockerfile
 FROM ruby:3-alpine
-ARG DUCKDB_VERSION=0.9.2
+ARG DUCKDB_VERSION=0.10.0
 
 RUN apk add --update --no-cache make g++ unzip \
     && wget https://github.com/duckdb/duckdb/releases/download/v${DUCKDB_VERSION}/libduckdb-linux-amd64.zip \

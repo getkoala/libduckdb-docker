@@ -2,15 +2,18 @@ ARG ALPINE_VERSION
 
 FROM alpine:${ALPINE_VERSION} AS build
 ARG DUCKDB_VERSION
-RUN apk add --update --no-cache make cmake gcc musl-dev g++ git openssl-dev openssl-libs-static samurai
+RUN apk add --update --no-cache g++ git make cmake ninja openssl-dev openssl-libs-static python3
 
 ENV GEN=ninja \
     EXTRA_CMAKE_VARIABLES='-DBUILD_UNITTESTS=FALSE -DBUILD_SHELL=FALSE' \
     BUILD_HTTPFS=1 \
     BUILD_JSON=1 \
     STATIC_OPENSSL=1 \
+    ENABLE_EXTENSION_AUTOLOADING=1 \
+    ENABLE_EXTENSION_AUTOINSTALL=1 \
     EXTENSION_STATIC_BUILD=1
 
+# TODO: Change git clone to wget + unzip
 RUN set -x \
     && cd /tmp \
     && git clone --depth=1 -b v${DUCKDB_VERSION} https://github.com/duckdb/duckdb \
