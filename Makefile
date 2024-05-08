@@ -1,6 +1,6 @@
 DUCKDB_VERSION?=0.10.2
 ALPINE_VERSION?=3.19
-REPOSITORY?=fgrehm/libduckdb
+REPOSITORY?=getkoala/libduckdb
 
 .PHONY: alpine
 alpine:
