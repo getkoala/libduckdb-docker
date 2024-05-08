@@ -9,14 +9,14 @@ Curious why I built this? Skip to the [why](#why) section below.
 
 ## Available tags
 
-https://hub.docker.com/r/fgrehm/libduckdb/tags
+https://hub.docker.com/r/getkoala/libduckdb/tags
 
 ## Usage
 
 On your `Dockerfile`s:
 
 ```dockerfile
-FROM fgrehm/libduckdb:<TAG> AS libduckdb
+FROM getkoala/libduckdb:<TAG> AS libduckdb
 
 FROM some/base:image-tag
 
@@ -31,15 +31,19 @@ COPY --from=libduckdb /libduckdb/usr/local/lib/libduckdb.so /usr/local/lib
 ### Alpine Linux
 
 ```dockerfile
-FROM fgrehm/libduckdb:0.10.0-alpine3.19 AS libduckdb
+FROM getkoala/libduckdb:0.10.2-alpine3.19 AS libduckdb
 
 FROM ruby:3.2-alpine3.19
 RUN apk add --no-cache --update \
             make \
             g++
 
-# Only if you trust me
+# If you trust us
 COPY --from=libduckdb /libduckdb /
+# If you don't trust us
+COPY --from=libduckdb /libduckdb/usr/local/include/duckdb.h /usr/local/include
+COPY --from=libduckdb /libduckdb/usr/local/lib/libduckdb.so /usr/local/lib
+
 
 # On a real project you'd add your Gemfile, bundle install, etc.
 RUN gem install duckdb
@@ -48,7 +52,7 @@ RUN gem install duckdb
 ### Other distros
 
 ```dockerfile
-FROM fgrehm/libduckdb:0.10.0 AS libduckdb
+FROM getkoala/libduckdb:0.10.2 AS libduckdb
 
 FROM ruby:3-slim
 
@@ -56,8 +60,11 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends make gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Only if you trust me
+# If you trust us
 COPY --from=libduckdb /libduckdb /
+# If you don't trust us
+COPY --from=libduckdb /libduckdb/usr/local/include/duckdb.h /usr/local/include
+COPY --from=libduckdb /libduckdb/usr/local/lib/libduckdb.so /usr/local/lib
 
 # On a real project you'd add your Gemfile, bundle install, etc.
 RUN gem install duckdb
@@ -87,7 +94,7 @@ the trick:
 
 ```dockerfile
 FROM ruby:3
-ARG DUCKDB_VERSION=0.10.0
+ARG DUCKDB_VERSION=0.10.2
 RUN wget https://github.com/duckdb/duckdb/releases/download/v${DUCKDB_VERSION}/libduckdb-linux-amd64.zip \
     && unzip libduckdb-linux-amd64.zip -d libduckdb \
     && mv libduckdb/duckdb.* /usr/local/include \
@@ -103,7 +110,7 @@ few more things and your `Dockerfile` might look like this:
 
 ```dockerfile
 FROM ruby:3-slim
-ARG DUCKDB_VERSION=0.10.0
+ARG DUCKDB_VERSION=0.10.2
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
                        make \
@@ -125,7 +132,7 @@ Unfortunately the equivalent of that for Alpine Linux won't work:
 
 ```dockerfile
 FROM ruby:3-alpine
-ARG DUCKDB_VERSION=0.10.0
+ARG DUCKDB_VERSION=0.10.2
 
 RUN apk add --update --no-cache make g++ unzip \
     && wget https://github.com/duckdb/duckdb/releases/download/v${DUCKDB_VERSION}/libduckdb-linux-amd64.zip \
@@ -160,9 +167,8 @@ duckdb >= 0.5.0 is not found. Install duckdb >= 0.5.0 library and header file.
 If I'm not mistaken, the reason for that is because Alpine is based on
 [musl](https://en.wikipedia.org/wiki/Musl) and even installing packages like
 `gcompat` won't get it fixed. The solution is to [compile the DuckDB library
-yourself](https://github.com/fgrehm/libduckdb-docker/blob/main/Dockerfile.alpine)
-and that will take a good 20+min to complete (it takes 30min+ on
-[GitHub actions](https://github.com/fgrehm/libduckdb-docker/actions/runs/5166573763/jobs/9306834368#step:6:1)).
+yourself](https://github.com/getkoala/libduckdb-docker/blob/main/Dockerfile.alpine)
+and that will take a good 10+min to complete.
 
 This project makes that precompiled library available for use on Docker images
 using the `COPY` commands as described above, regardless of distribution flavor.
