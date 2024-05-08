@@ -66,9 +66,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-v1-scratch-${{ matrix.duckdb_version }}-${{ github.sha }}
+          key: ${{ runner.os }}-v2-scratch-${{ matrix.duckdb_version }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-v1-scratch-${{ matrix.duckdb_version }}-
+            ${{ runner.os }}-v2-scratch-${{ matrix.duckdb_version }}-
       -
         name: Build and export to Docker
         uses: docker/build-push-action@v4
@@ -136,9 +136,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-v1-alpine-${{ matrix.alpine_version }}-${{ matrix.duckdb_version }}-${{ github.sha }}
+          key: ${{ runner.os }}-v2-alpine-${{ matrix.alpine_version }}-${{ matrix.duckdb_version }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-v1-alpine-${{ matrix.alpine_version }}-${{ matrix.duckdb_version }}-
+            ${{ runner.os }}-v2-alpine-${{ matrix.alpine_version }}-${{ matrix.duckdb_version }}-
       -
         name: Build and export to Docker
         uses: docker/build-push-action@v4
